@@ -1,0 +1,169 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+#container{
+	background-color: #efeff3;
+}
+.petc_page{
+	top: 125px;
+	padding-top: 10px;
+	background-color: #efeff3;
+}
+.petc_selector{
+	margin: 0;
+	font-size: 13px;
+	line-height: 15px;
+	color: #212121;
+	line-height: 45px;
+	padding-left: 15px;
+}
+.petc_selector:before{
+	height: 0;
+	border: none;
+}
+.petc_date{
+	display: inline-block;
+	width: 110px;
+	height: 25px;
+	vertical-align: middle;
+	box-sizing: border-box;
+	margin: -3px 5px 0;
+	position: relative;
+	line-height: 27px;
+	text-align: center;
+	color: #9b9b9b;
+}
+.petc_date:before{
+	content: "";
+	position: absolute;
+	width: 200%;
+	height: 200%;
+	box-sizing: border-box;
+	border: 1px solid #c7c7c7;
+	border-radius: 4px;
+	left: -50%;
+	top: -50%;
+	transform-origin: center;
+	transform: scale(.5);
+}
+.petc_page .weui-cell__ft{
+	position: absolute;
+	right: 15px;
+	top: 0;
+	height: 100%;
+}
+.petc_page .weui-panel__bd{
+	padding-right: 40px;
+}
+
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left back_to_home will_redirect" href="/WxPersonalCenter/personCenter?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">个人中心</a>
+		消费记录
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=BILL&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+	<div class="weui-panel petc_selector">
+		<div class="weui-panel__bd">
+			<p>筛选：<span class="petc_date petc_date_start">{$starttime}</span>至<span class="petc_date petc_date_end">{$endtime}</span></p>
+		</div>
+	</div>
+</div>
+
+<div class="petc_page page">
+	<volist name="datas" id="vo">
+		<a href="/WxPurchase/purchaseHistoryDetail?billmid={$vo['Mid']}&regcode={$_GET['regcode']}&regname={$_GET['regname']}&payprice={$vo['PayTotal']}&petname={$vo['PetName']}&paytime={$vo['PayTime']|substr=6,10}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">
+			<div class="weui-panel weui-cell_access will_redirect">
+				<div class="weui-panel__bd">
+					<div class="weui-media-box weui-media-box_text">
+						<h4 class="weui-media-box__title">-￥{$vo['PayTotal']}</h4>
+						<p class="weui-media-box__desc">{$vo['PayTime']|substr=6,10|date='Y/m/d',###}（<?php $w=date('w',substr($vo['PayTime'],6,10));$weekArr=array("周日","周一","周二","周三","周四","周五","周六");echo $weekArr[$w]; ?>）&nbsp;&nbsp;&nbsp;&nbsp;宠物：{$vo['PetName']}</p>
+					</div>
+				</div>
+				<span class="weui-cell__ft"></span>
+			</div>
+		</a>
+	</volist>
+
+	<if condition="$isleft eq 1">
+		<div class="weui-loadmore">
+		    <span class="weui-loadmore__tips click_to_load">加载更多</span>
+		</div>
+	<else />
+		<div class="weui-loadmore">
+		    <span class="weui-loadmore__tips">无更多数据</span>
+		</div>
+	</if>
+
+</div>
+<script type="text/javascript" src="/Public/javascripts/loading_zc.js?v=16"></script>
+<script type="text/javascript" src="/Public/javascripts/selector_zc.js?v=4"></script>
+<script type="text/javascript" src="/Public/javascripts/remain_status_zc.js?v=2"></script>
+<script type="text/javascript">
+	// -----------------------------------
+	// ---------需要loading_zc.js，返回后保持ajax请求后的状态
+	show_prev_html();
+	scroll_prev_position();
+	bind_position_event();
+
+$(function() {
+	// -----------------------------------
+	// ---------selector_zc.js-加载选择器
+	var startTime = "{$starttime}";
+	var endTime = "{$endtime}";
+	var this_url = window.location.pathname + window.location.search;
+	setup_selector(this_url, startTime, endTime);
+
+	// -----------------------------------
+	// ---------loading_zc.js-ajax加载数据
+	// 1-是否有剩余数据
+	var isleft = $('.weui-loadmore').data('isleft') !== undefined ? $('.weui-loadmore').data('isleft') : "{$isleft}";
+	// 2-拼装post数据
+	var regcode = "{$_GET['regcode']}";
+	var consumermid = "{$_GET['consumermid']}";
+	var currentpage = + ($('.weui-loadmore').data('page') || "{$currentpage}");
+	var info = {
+		"regcode": regcode,
+		"consumermid": consumermid,
+		"startTime": startTime,
+		"endTime": endTime,
+		"currentpage": currentpage
+	};
+	// 3-将ajax返回数据进行拼装
+	function create_html(datas) {
+		var len = datas.length;
+		var _html = '';
+
+		for (var i = 0; i < len; i++) {
+			var data = JSON.parse(datas[i]);
+			console.log(data);
+			var pt = data.PayTime.substr(6, 10);
+			var item = '<a href="/WxPurchase/purchaseHistoryDetail?billmid=' +
+					   data.Mid + '&regcode=' + "{$_GET['regcode']}" + '&regname=' + "{$_GET['regname']}" + '&payprice=' + 
+					   data.PayTotal + '&petname=' + data.PetName + '&paytime=' + pt + '&wxid=' + "{$_GET['wxid']}" + '&ismulti=' + "{$_GET['ismulti']}" + '">' +
+					     '<div class="weui-panel weui-cell_access">' +
+					       '<div class="weui-panel__bd">' +
+					         '<div class="weui-media-box weui-media-box_text">' +
+					           '<h4 class="weui-media-box__title">-￥' + data.PayTotal + '</h4>' +
+					           '<p class="weui-media-box__desc">' + this.show_date(data.PayTime) + '（' + this.show_week(data.PayTime) + '）' +
+					           '&nbsp;&nbsp;&nbsp;&nbsp;宠物：' + data.PetName + '</p></div></div><span class="weui-cell__ft"></span></div></a>';
+			_html += item;
+		}
+
+		return _html;
+	}
+	// 4-post目标url
+	var post_url = '/WxPurchase/ajaxPurchaseHistory';
+	// 5-创建实例并加载
+	var loading = new Loading_zc(isleft, info, create_html, post_url, bind_position_event, bind_redirect_event);
+	loading.init();
+	// -----------------------------------
+
+});
+</script>

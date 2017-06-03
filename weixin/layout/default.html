@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>宠主助手-dev</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/Public/stylesheets/weui.min.css?v=4">
+	<link rel="stylesheet" href="/Public/stylesheets/common.css?t={:time()}">
+	<script type="text/javascript" src="/Public/javascripts/weui.min.js"></script>
+	<script type="text/javascript" src="/Public/javascripts/zepto.min.js"></script>
+</head>
+<body ontouchstart="">
+	<div id="container">
+		{__CONTENT__}
+	</div>
+	<script type="text/javascript">
+		var loading;
+		window.onload = function(){
+			setTimeout(function(){
+				if (loading) {
+					loading.hide();
+				}
+			}, 100);
+		};
+		function bind_redirect_event() {
+			$('.will_redirect').click(function(event) {
+				loading = weui.loading('加载中...', {
+				    className: 'loading'
+				});
+			});
+		}
+		bind_redirect_event();
+	</script>
+</body>
+</html>

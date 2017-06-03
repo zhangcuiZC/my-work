@@ -1,0 +1,139 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+.pc_header{
+	width: 100%;
+	height: 144px;
+	font-size: 13px;
+	color: #fff;
+	box-sizing: border-box;
+	padding-top: 25px;
+	background: url(/Public/images/pc_bg.png) no-repeat center;
+	background-size: cover;
+}
+.pc_icon{
+	width: 60px;
+	height: 60px;
+	border: 3px solid #fff;
+	box-shadow: 0 0 10px 0 rgba(255,255,255,0.8);
+	overflow: hidden;
+	border-radius: 50%;
+	margin: 0 auto 10px;
+}
+.pc_icon img{
+	width: 100%;
+	height: 100%;
+}
+.pc_name{
+	text-align: center;
+}
+.pc_hospital{
+	font-size: 13px;
+	color: #4a4a4a;
+	padding: 0 15px;
+	height: 40px;
+	line-height: 40px;
+	background-color: #f0f0f0;
+	position: relative;
+}
+.pc_hospital:after{
+	content: "";
+	height: 0;
+	width: 100%;
+	border-bottom: 1px solid #c7c7c7;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform-origin: center bottom;
+	transform: scaleY(.5);
+}
+.pc_main{
+	margin-bottom: 30px;
+}
+.pc_main:before{
+	height: 0;
+	border: none;
+}
+</style>
+
+<div class="pc_header">
+	<div class="pc_icon"><img src="/Public/images/touxiang@2x.png"></div>
+	<p class="pc_name">{$info['consumername']}<?php if($info['consumermobile']){echo '(' . $info['consumermobile'] . ')';} ?></p>
+</div>
+<div class="pc_hospital">
+	{$_GET['regname']}
+	<if condition="$_GET['ismulti'] neq ''">
+		<a href="/WxPersonalCenter/chooseHospital?type=HOME&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+	</if>
+</div>
+<div class="weui-cells pc_main">
+	<if condition="$info['isappointment'] eq '1'">
+    	<a class="weui-cell weui-cell_access will_redirect" href="/WxAppointment/myAppointment?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">
+    <else />
+    	<a class="weui-cell weui-cell_access" href="javascript:show_alert_msg('{$Think.get.regname}尚未开通该功能');">
+    </if>
+        <div class="weui-cell__hd"><img src="/Public/images/icon_pp_yuyue.png" alt="" style="width:20px;margin-right:15px;display:block"></div>
+        <div class="weui-cell__bd">
+            <p>我的预约</p>
+        </div>
+        <div class="weui-cell__ft"></div>
+    </a>
+
+    <if condition="$info['isreport'] eq '1'">
+    	<a class="weui-cell weui-cell_access will_redirect" href="/WxPetCase/petCase?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">
+    <else />
+    	<a class="weui-cell weui-cell_access" href="javascript:show_alert_msg('{$Think.get.regname}尚未开通该功能');">
+    </if>
+        <div class="weui-cell__hd"><img src="/Public/images/icon_pp_bingli.png" alt="" style="width:20px;margin-right:15px;display:block"></div>
+        <div class="weui-cell__bd">
+            <p>宠物病历</p>
+        </div>
+        <div class="weui-cell__ft"></div>
+    </a>
+
+	<if condition="$info['isexamine'] eq '1'">
+    	<a class="weui-cell weui-cell_access will_redirect" href="/WxInspection/inspectionReport?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">
+    <else />
+    	<a class="weui-cell weui-cell_access" href="javascript:show_alert_msg('{$Think.get.regname}尚未开通该功能');">
+    </if>
+        <div class="weui-cell__hd"><img src="/Public/images/icon_pp_jianyan.png" alt="" style="width:20px;margin-right:15px;display:block"></div>
+        <div class="weui-cell__bd">
+            <p>检验报告</p>
+        </div>
+        <div class="weui-cell__ft"></div>
+    </a>
+
+    <if condition="$info['isbill'] eq '1'">
+    	<a class="weui-cell weui-cell_access will_redirect" href="/WxPurchase/purchaseHistory?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">
+    <else />
+    	<a class="weui-cell weui-cell_access" href="javascript:show_alert_msg('{$Think.get.regname}尚未开通该功能');">
+    </if>
+        <div class="weui-cell__hd"><img src="/Public/images/icon_pp_moneylist.png" alt="" style="width:20px;margin-right:15px;display:block"></div>
+        <div class="weui-cell__bd">
+            <p>消费记录</p>
+        </div>
+        <div class="weui-cell__ft"></div>
+    </a>
+</div>
+<div class="alert_msg"></div>
+<script type="text/javascript">
+	// --------------------------------------------------
+	// 功能函数：弹出提示框
+	var show_alert_msg = (function(){
+		var timer = null;
+		var $alert_msg = $('.alert_msg');
+
+		return function (msg) {
+			$alert_msg.text(msg);
+			if (timer) {
+				clearTimeout(timer);
+				$alert_msg.removeClass('active');
+			}
+			$alert_msg.addClass('active');
+			timer = setTimeout(function() {
+				$alert_msg.removeClass('active');
+			}, 3000);
+		};
+	}());
+
+</script>

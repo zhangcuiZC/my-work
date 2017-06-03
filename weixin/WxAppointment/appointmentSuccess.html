@@ -1,0 +1,22 @@
+<layout name="layout/default" />
+
+<div class="weui-msg">
+    <div class="weui-msg__icon-area"><img src="/Public/images/icon_send.png" style="width: 25%;max-width: 160px;"></div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">预约发送成功</h2>
+        <p class="weui-msg__desc">请您等待医院方确认预约<br>您也可以在<a class="will_redirect" href="/WxAppointment/myAppointment?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">查看预约</a>里联系医院</p>
+    </div>
+    <div class="weui-msg__opr-area">
+        <p class="weui-btn-area">
+            <a href="/WxAppointment/myAppointment?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}" class="weui-btn weui-btn_primary will_redirect">查看预约</a>
+            <a href="javascript:history.back();" class="weui-btn weui-btn_default">返<i style="color: transparent;">返回</i>回</a>
+        </p>
+    </div>
+    <div class="weui-msg__extra-area">
+        <div class="weui-footer">
+            <p class="weui-footer__links">
+                <a href="/WxAppointment/appointmentNotice?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}" class="weui-footer__link will_redirect">预约须知</a>
+            </p>
+        </div>
+    </div>
+</div>

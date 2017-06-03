@@ -1,0 +1,128 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+#container, .pcd_page{
+	background-color: #efeff3;
+}
+.pcd_page{
+	top: 80px;
+}
+.pcd_pet_title .weui-media-box{
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+.pcd_pet_title{
+	margin-top: 0;
+}
+.pcd_pet_title:before{
+	height: 0;
+	border: none;
+}
+.pcd_pet_detail .pcd_pet_item{
+	padding: 0 8px;
+	color: #212121;
+	line-height: 1.8em;
+}
+.pcd_pet_detail .pcd_pet_item:before{
+	content: "";
+	position: absolute;
+	width: 200%;
+	height: 200%;
+	left: -50%;
+	top: -50%;
+	border: 1px solid #c7c7c7;
+	border-radius: 4px;
+	transform-origin: center;
+	transform: scale(.5);
+	box-sizing: border-box;
+}
+.pcd_table{
+	margin-top: 5px;
+	font-size: 13px;
+	color: #9b9b9b;
+	line-height: 2em;
+	width: 100%;
+	border-spacing: 0 8px;
+}
+.pcd_table td{
+	position: relative;
+	padding: 4px 0;
+}
+.pcd_table tr{
+	position: relative;
+}
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left" href="javascript:history.back();">病历单</a>
+		宠物病历
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=REPORT&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+</div>
+<div class="pcd_page page">
+	<div class="weui-panel pcd_pet_title">
+		<div class="weui-panel__bd">
+			<div class="weui-media-box weui-media-box_text">
+				<h4 class="weui-media-box__title">{$data['Abstract']?:'&nbsp;'}</h4>
+				<p class="weui-media-box__desc">{$data['EventTime']}（<?php $w=date('w',strtotime($data['EventTime']));$weekArr=array("周日","周一","周二","周三","周四","周五","周六");echo $weekArr[$w]; ?>）&nbsp;&nbsp;&nbsp;&nbsp;宠物：{$data['PetName']}</p>
+			</div>
+		</div>
+	</div>
+	<div class="weui-cells__title">病例详情</div>
+	<div class="weui-panel pcd_pet_detail" style="margin-top: 0;margin-bottom: 10px;">
+		<div class="weui-panel__bd">
+			<div class="weui-media-box weui-media-box_text">
+				<h4 class="weui-media-box__title" style="text-align: center;color: #4990e2;">病历单</h4>
+				<table class="pcd_table">
+					<tbody>
+						<tr>
+							<td width="60px">诊疗科目</td>
+							<td class="pcd_pet_item">{$data['DiagnosisType']}</td>
+						</tr>
+						<tr>
+							<td>病情分类</td>
+							<td class="pcd_pet_item">{$data['Abstract']}</td>
+						</tr>
+						<tr>
+							<td>就诊时间</td>
+							<td class="pcd_pet_item">{$data['InHospitalTime']}</td>
+						</tr>
+						<tr>
+							<td>主治医生</td>
+							<td class="pcd_pet_item">{$data['Con_Employee_Name']}</td>
+						</tr>
+						<tr>
+							<td>宠物体重</td>
+							<td class="pcd_pet_item">{$data['Weight']}kg</td>
+						</tr>
+						<tr>
+							<td>主诉记录</td>
+							<td class="pcd_pet_item">{$data['ChiefNote']}</td>
+						</tr>
+						<tr>
+							<td>检验分析</td>
+							<td class="pcd_pet_item">{$data['CheckNote']}</td>
+						</tr>
+						<tr>
+							<td>病情诊断</td>
+							<td class="pcd_pet_item">{$data['ConditionNote']}</td>
+						</tr>
+						<tr>
+							<td>医<span style="color: transparent;">医嘱</span>嘱</td>
+							<td class="pcd_pet_item">{$data['PhysicalOrder']}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="weui-loadmore">
+	    <span class="weui-loadmore__tips">无更多数据</span>
+	</div>
+</div>

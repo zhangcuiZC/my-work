@@ -1,0 +1,400 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+.ma_page{
+	top: 40px;
+}
+.ma_page.inputing{
+}
+.ma_selectors{
+	font-size: 15px;
+	color: #4a4a4a;
+	margin: 0;
+}
+.ma_selectors:before{
+	height: 0;
+	border: none;
+}
+.ma_selectors:after{
+	height: 0;
+	border: none;
+}
+.ma_selectors .weui-cell:before{
+	left: 15px;
+	right: 15px;
+}
+.ma_textarea{
+	margin: 0 15px 25px;
+	height: 82px;
+	font-size: 13px;
+	padding: 5px;
+	box-sizing: border-box;
+	color: #9b9b9b;
+	position: relative;
+}
+.ma_textarea:before{
+	content: "";
+	position: absolute;
+	box-sizing: border-box;
+	width: 200%;
+	height: 200%;
+	left: -50%;
+	top: -50%;
+	transform-origin: center;
+	transform: scale(0.5);
+	border: 1px solid #e4e4e4;
+	z-index: 1;
+}
+.page_btn{
+	margin-bottom: 80px;
+}
+</style>
+<div class="page_fixed">
+	<div class="page_header">
+		<if condition="$_GET['regcode'] neq ''">
+			<a class="page_header_left will_redirect" href="/WxPersonalCenter/personCenter?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">个人中心</a>
+		<elseif condition="count($datas) eq 1" />
+			<a class="page_header_left will_redirect" href="/WxPersonalCenter/personCenter?regcode={$datas[0]['regcode']}&regname={$datas[0]['regname']}&consumermid={$datas[0]['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">个人中心</a>
+		<else />
+			<a class="page_header_left will_redirect" href="/WxPersonalCenter/chooseHospital?type=HOME&wxid={$_GET['wxid']}">个人中心</a>
+		</if>
+		在线预约
+		<a class="page_header_right will_redirect" href="/WxAppointment/appointmentNotice?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}"></a>
+	</div>
+</div>
+
+<div class="ma_page page">
+	<div class="weui-cells ma_selectors">
+		<a class="weui-cell weui-cell_access ma_hospital_choose" href="javascript:;">
+			<div class="weui-cell__bd">
+				<p>医院选择</p>
+			</div>
+			<div class="weui-cell__ft">
+			请选择
+			</div>
+		</a>
+		<a class="weui-cell ma_pet_choose" href="javascript:;">
+			<div class="weui-cell__bd">
+				<p>预约宠物</p>
+			</div>
+			<div class="weui-cell__ft" style="width: 70%;padding-right: 13px;">
+				<input type="text" class="weui-input" style="text-align: right;" placeholder="请输入" id="petname">
+			</div>
+		</a>
+		<a class="weui-cell weui-cell_access ma_sevice_choose" href="javascript:;">
+			<div class="weui-cell__bd">
+				<p>服务选择</p>
+			</div>
+			<div class="weui-cell__ft">
+			请选择
+			</div>
+		</a>
+		<a class="weui-cell weui-cell_access ma_expect_date" href="javascript:;">
+			<div class="weui-cell__bd">
+				<p>期望时间</p>
+			</div>
+			<div class="weui-cell__ft">
+			请选择
+			</div>
+		</a>
+		<a class="weui-cell" href="javascript:;" style="color: inherit;">
+			<div class="weui-cell__bd">
+				<p>备<i style="color:transparent;">备注</i>注</p>
+			</div>
+		</a>
+		<div class="ma_textarea">
+			<textarea rows="4" class="weui-textarea" placeholder="您的特殊要求，如多宠物，新宠物等" style="position: relative;z-index: 2;"></textarea>
+			<div style="position: absolute;right: 3px;bottom: 1px;z-index: 3;background-color: rgba(255,255,255,0.8);font-size: 12px;"><span class="desc_count">0</span>/100</div>
+		</div>
+	</div>
+
+	<div class="page_btn">
+		<a href="javascript:;" class="weui-btn weui-btn_primary">申请预约</a>
+	</div>
+</div>
+
+<div class="alert_msg"></div>
+
+<script type="text/javascript">
+$(function() {
+	var is_hospital_choosed = false;
+	var start_time, end_time, appointmenttype, appoint_time_msg;
+	var is_time_valid = true;
+
+	var service_options_origin = [
+		{ label: '手术预约', value: 1 },
+		{ label: '美容洗澡', value: 2 },
+		{ label: '门诊预约', value: 3 },
+		{ label: '疫苗驱虫', value: 4 },
+		{ label: '其他预约', value: 5 },
+		{ label: '回访预约', value: 6 }
+	];
+
+	var hours = [],
+		minites = [],
+		symbol = [{ label: ':', value: 0 }];
+
+	function create_hours(start, end) {
+		for (var i = start; i < end; i++) {
+			var hours_item = {};
+			hours_item.label = ('' + i).length === 1 ? '0' + i : '' + i;
+			hours_item.value = i;
+			hours.push(hours_item);
+		}
+	}
+
+	var info = {};
+	info.wxid = "{$_GET['wxid']}";
+	
+	// ---------------------------------------
+	// 医院数据
+	var hospital_arr = {:json_encode($datas)};
+	console.log(hospital_arr);
+
+	var len = (hospital_arr && hospital_arr.length) || 0;
+	var hospital_options = [];
+	if (len) {
+		for (var i = 0; i < len; i++) {
+			var item = {};
+			item.label = hospital_arr[i].regname;
+			item.consumermid = hospital_arr[i].consumermid;
+			item.regcode = hospital_arr[i].regcode;
+			item.value = i;
+			item.appointmenttype = hospital_arr[i].appointmenttype;
+			item.appointmentstarttime = hospital_arr[i].appointmentstarttime;
+			item.appointmentendtime = hospital_arr[i].appointmentendtime;
+			hospital_options.push(item);
+		}
+		if (len === 1) {
+			$('.ma_hospital_choose').find('.weui-cell__ft').text(hospital_options[0].label);
+			info.regcode = hospital_options[0].regcode;
+			info.regname = hospital_options[0].label;
+			info.consumermid = hospital_options[0].consumermid;
+
+			is_hospital_choosed = true;
+
+			appointmenttype = hospital_options[0].appointmenttype;
+			service_options = service_options_origin.filter(function(val,idx,arr) {
+				var at_arr = appointmenttype.split(',');
+				if (at_arr.indexOf(''+val.value) !== -1) {
+					return true;
+				}
+			});
+
+			start_time = hospital_options[0].appointmentstarttime.split(':');
+			end_time = hospital_options[0].appointmentendtime.split(':');
+			create_hours(+start_time[0],(+end_time[0])+1);
+		}
+
+	}
+	// 选择调用
+	$('.ma_hospital_choose').click(function(event) {
+		var _this = this;
+		if (len) {
+			weui.picker(hospital_options, {
+				defaultValue: [0],
+				onConfirm: function(result) {
+					$(_this).find('.weui-cell__ft').text(result[0].label);
+
+					var consumermid = hospital_options[result[0].value].consumermid;
+					var regcode = hospital_options[result[0].value].regcode;
+
+					info.regname = result[0].label;
+					info.regcode = regcode;
+					info.consumermid = consumermid;
+
+					is_hospital_choosed = true;
+
+					appointmenttype = hospital_options[result[0].value].appointmenttype;
+					service_options = service_options_origin.filter(function(val,idx,arr) {
+						var at_arr = appointmenttype.split(',');
+						if (at_arr.indexOf(''+val.value) !== -1) {
+							return true;
+						}
+					});
+					
+					start_time = hospital_options[result[0].value].appointmentstarttime.split(':');
+					end_time = hospital_options[result[0].value].appointmentendtime.split(':');
+					create_hours(+start_time[0],(+end_time[0])+1);
+				},
+				id: 'ma_hospital_choose'
+			});
+		}else {
+			show_alert_msg('没有关注任何医院！');
+		}
+	});
+
+	// ---------------------------------------
+	// 服务选择
+	$('.ma_sevice_choose').click(function(event) {
+		if (!is_hospital_choosed) {
+			show_alert_msg('请选择医院');
+			return false;
+		}
+		var _this = this;
+		weui.picker(service_options, {
+			defaultValue: [1],
+			onConfirm: function(result) {
+				if (result[0].value) {
+					$(_this).find('.weui-cell__ft').text(result[0].label);
+					info.servicetype = result[0].value;
+				}
+			},
+			id: 'ma_sevice_choose'
+		});
+	});
+
+	// ---------------------------------------
+	// 时间选择
+	$('.ma_expect_date').click(function(event) {
+		if (!is_hospital_choosed) {
+			show_alert_msg('请选择医院');
+			return false;
+		}
+		var _this = this;
+		weui.datePicker({
+			start: new Date(),
+			end: 2030,
+			defaultValue: [new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate()],
+			onConfirm: function(result){
+				// 二级调用：时间
+				$('.ma_expect_date_picker .weui-picker').on('animationend webkitAnimationEnd', function() {
+					show_expect_time_picker(_this, result);
+				});
+			},
+			id: 'ma_expect_date',
+			className: 'ma_expect_date_picker'
+		});
+	});
+	// 二级调用：时间
+	function show_expect_time_picker(_this, date) {
+		var _date = date[0].value + '-' + (('' + date[1].value).length === 1 ? '0' + date[1].value : '' + date[1].value) + '-' + (('' + date[2].value).length === 1 ? '0' + date[2].value : '' + date[2].value);
+
+		if (!minites.length) {
+			for (var j = 0; j < 60; j++) {
+				var minites_item = {};
+				minites_item.label = ('' + j).length === 1 ? '0' + j : '' + j;
+				minites_item.value = j;
+				minites.push(minites_item);
+			}
+		}
+
+		weui.picker(hours, symbol, minites, {
+			defaultValue: [new Date().getHours()+1, 0, 0],
+			onChange: function(result) {
+				if (result.length === 3) {
+					if (((+start_time[0]) === result[0].value && (+start_time[1]) > result[2].value) || ((+end_time[0]) === result[0].value && (+end_time[1]) < result[2].value)) {
+						appoint_time_msg = '该医院可接受预约的时间为：' + start_time.join(':') + '-' + end_time.join(':');
+						show_alert_msg(appoint_time_msg);
+						is_time_valid = false;
+					}else{
+						is_time_valid = true;
+					}
+				}
+				
+			},
+			onConfirm: function(result) {
+				if (!is_time_valid) {
+					show_alert_msg(appoint_time_msg);
+					return false;
+				}
+				var time = result[0].label + ':' + result[2].label;
+				var expect_date = _date + ' ' + time;
+				$(_this).find('.weui-cell__ft').text(expect_date);
+				info.expecttime = expect_date;
+			},
+			id: 'ma_expect_time'
+		});
+	}
+
+	// --------------------------------------------------
+	// 手机输入备注时自动上滑，防止被键盘盖住输入框
+	$('.ma_textarea textarea').click(function(event) {
+		setTimeout(function() {
+			$('.ma_page').scrollTop(180);
+		}, 600);
+	});
+	// 限制输入备注的字数为100
+	$('.desc_count').text($('.ma_textarea textarea').val().length);
+	$('.ma_textarea textarea').on('keyup blur', function(event) {
+		var text = $(this).val();
+		var len = text.length;
+		if (len > 100) {
+			$('.desc_count').text(100);
+			var max = text.substring(0, 100);
+			$(this).val(max);
+		}else {
+			$('.desc_count').text(len);
+		}
+	});
+
+	// --------------------------------------------------
+	// 功能函数：弹出提示框
+	var show_alert_msg = (function(){
+		var timer = null;
+		var $alert_msg = $('.alert_msg');
+
+		return function (msg) {
+			$alert_msg.text(msg);
+			if (timer) {
+				clearTimeout(timer);
+				$alert_msg.removeClass('active');
+			}
+			$alert_msg.addClass('active');
+			timer = setTimeout(function() {
+				$alert_msg.removeClass('active');
+			}, 3000);
+		};
+	}());
+	// 点击提交
+	$('.page_btn').click(function(event) {
+		//regcode,consumermid,petname,petmid,servicetype,expecttime,discription
+		var petname = $('#petname').val(),
+			discription = $('.ma_textarea textarea').val();
+
+		if (!info.regcode) {
+			show_alert_msg('请选择医院');
+			return false;
+		}
+		if (!info.servicetype) {
+			show_alert_msg('请选择服务');
+			return false;
+		}
+		if (!info.expecttime) {
+			show_alert_msg('请选择时间');
+			return false;
+		}
+		if (!petname) {
+			show_alert_msg('请输入预约宠物');
+			return false;
+		}
+
+		info.petname = petname;
+		info.discription = discription;
+		
+		var loading_post = weui.loading('提交中...', {
+		    className: 'loading_post'
+		});
+
+		console.log(info);
+
+		$.ajax({
+			url: '/WxAppointment/ajaxAddAppointment',
+			type: 'POST',
+			data: {"info": info},
+			success: function(d) {
+				var data = JSON.parse(d);
+				if (data.code === 0) {
+					loading_post.hide();
+					weui.toast('提交成功', 2000);
+					window.location = "/WxAppointment/appointmentSuccess?regcode=" + info.regcode + "&regname=" + info.regname + "&consumermid=" + info.consumermid + "&wxid=" + info.wxid + "&ismulti={$_GET['ismulti']}";
+				}else {
+					show_alert_msg('提交失败，请重新提交');
+					loading_post.hide();
+				}
+			}
+		});
+	});
+
+});
+</script>

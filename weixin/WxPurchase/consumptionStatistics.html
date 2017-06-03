@@ -1,0 +1,200 @@
+<layout name="/layout/default" />
+
+<style type="text/css">
+	.cs_page{
+		top: 80px;
+	}
+	.cs_page .pc_hospital:after{
+		height: 0;
+		border: none;
+	}
+	.cs_title{
+		height: 40px;
+		line-height: 40px;
+		padding: 0 15px;
+		font-size: 15px;
+		color: #5d5d5d;
+		position: relative;
+	}
+	.cs_title:before{
+		content: "";
+		position: absolute;
+		border-bottom: 1px solid #e4e4e4;
+		left: 15px;
+		right: 15px;
+		bottom: 0;
+		transform-origin: center bottom;
+		transform: scaleY(.5);
+	}
+	.cs_title_num{
+		float: right;
+		font-size: 16px;
+		color: #d8645b;
+	}
+	#chart_box{
+		width: 100%;
+		height: 400px;
+		margin-bottom: 30px;
+	}
+</style>
+<script type="text/javascript" src="/Public/javascripts/echarts.min.js"></script>
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left" href="/WxPersonalCenter/personCenter">个人中心</a>
+		消费统计
+		<div class="page_header_right"></div>
+	</div>
+	<div class="pc_hospital">
+		全心全意动物医院（北辰店）
+		<a href="/WxPersonalCenter/chooseHospital" class="weui-btn weui-btn_mini weui-btn_primary" style="float: right;margin-top: 7px;">更换</a>
+	</div>
+</div>
+<div class="cs_page page">
+	<div class="cs_title">
+		月总消费
+		<span class="cs_title_num">￥1000</span>
+	</div>
+	<div id="chart_box">
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+	var myChart = echarts.init(document.getElementById('chart_box'));
+
+	var series_data = [
+        {
+        	value:335, 
+        	name:'医疗',
+        	itemStyle: {
+        		normal: {
+        			color: '#3876C1'
+        		}
+        	}
+        },
+        {
+        	value:1000, 
+        	name:'寄养',
+        	itemStyle: {
+        		normal: {
+        			color: '#00a1b5'
+        		}
+        	}
+        },
+        {
+        	value:234, 
+        	name:'美容',
+        	itemStyle: {
+        		normal: {
+        			color: '#29ab91'
+        		}
+        	}
+        },
+        {
+        	value:135, 
+        	name:'零售',
+        	itemStyle: {
+        		normal: {
+        			color: '#ffb400'
+        		}
+        	}
+        },
+        {
+        	value:1548, 
+        	name:'疫苗驱虫',
+        	itemStyle: {
+        		normal: {
+        			color: '#ef5a4a'
+        		}
+        	}
+        }
+    ].sort(function(a, b) { return b.value - a.value});
+    var tmp_data_odd = series_data.filter(function(el, index) {
+    	return !(index % 2);
+    });
+    var tmp_data_even = series_data.filter(function(el, index) {
+    	return !!(index % 2);
+    });
+
+    series_data = tmp_data_odd.concat(tmp_data_even.reverse());
+
+
+    var legend_data = [
+    	{	
+    		value: 335,
+    		name: '医疗',
+    		icon: 'image:///Public/images/icon_yiliao.png'
+    	},
+    	{	
+    		value: 1000,
+    		name: '寄养',
+    		icon: 'image:///Public/images/icon_jiyang.png'
+    	},
+    	{	
+    		value: 234,
+    		name: '美容',
+    		icon: 'image:///Public/images/icon_meirong.png'
+    	},
+    	{	
+    		value: 135,
+    		name: '零售',
+    		icon: 'image:///Public/images/icon_lingshou.png'
+    	},
+    	{	
+    		value: 1548,
+    		name: '疫苗驱虫',
+    		icon: 'image:///Public/images/icon_yimiao.png'
+    	},
+    ].sort(function(a, b) { return b.value - a.value});
+
+	var option = {
+	    legend: {
+	        x: 'center',
+	        y: 'bottom',
+	        itemWidth: 25,
+	        itemHeight: 25,
+	        textStyle: {
+	        	color: '#9b9b9b',
+	        	fontSize: 11
+	        },
+	        data: legend_data
+	    },
+	    series: [
+	        {
+	            name:'消费统计',
+	            type:'pie',
+	            radius: ['20%', '50%'],
+	            minAngle: 1,
+	            clockwise: false,
+	            label: {
+	            	normal: {
+	            		formatter: '￥{c}\\n{b}'
+	            	},
+	            	emphasis: {
+	            		formatter : '{d}%\\n{b}'
+	            	}
+	            },
+	            data: series_data,
+	            markPoint: {
+	            	symbol: 'circle'
+	            }
+	        }
+	    ]
+	};
+    myChart.setOption(option);
+
+    $('.page_header_right').click(function(event) {
+    	weui.dialog({
+		    title: '统计说明',
+		    content: '本统计数据范围仅限您关注该医院后，医院共享给您的账单信息。<br><br>实际金额以线下为主，此处仅作参考。',
+		    className: 'statistics_notice',
+		    buttons: [{
+		        label: '确定',
+		        type: 'primary'
+		    }]
+		});
+    });
+    
+});
+</script>

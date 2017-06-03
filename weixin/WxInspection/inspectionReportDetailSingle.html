@@ -1,0 +1,229 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+	#container{
+		background-color: #efeff3;
+	}
+	.pcds_page{
+		top: 80px;
+		background-color: #efeff3;
+	}
+	.pcds_page .weui-cell:before{
+		color: #c7c7c7;
+		border-color: #c7c7c7;
+	}
+	.pcds_page .weui-panel{
+		background-color: #fafafa;
+		margin-bottom: 0;
+	}
+	.pcds_list{
+		margin-bottom: 30px;
+	}
+	.pcds_list:before{
+		height: 0;
+		border: none;
+	}
+	.pcds_page .weui-cell__ft:after{
+		display: none;
+	}
+	.pcds_page .weui-cell__ft{
+		padding-right: 0;
+		flex: 0.5;
+	}
+	.pcds_page .weui-cell__bd{
+		overflow: hidden;
+	}
+	.pcds_page .weui-cell__bd p{
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.pcds_page .weui-cell .arrow{
+		float: right;
+		margin-left: 15px;
+		width: 20px;
+		height: 20px;
+		background: url(/Public/images/arrow.png) no-repeat center;
+		transform: rotateZ(180deg);
+		transition: transform 0.4s;
+	}
+	.pcds_page .weui-cell.active .arrow{
+		transform: rotateZ(0deg);
+	}
+	.pcds_detail{
+		background-color: #efeff3;
+		padding-bottom: 10px;
+		position: relative;
+	}
+	.pcds_detail_box{
+		transform-origin: center top;
+		transform: scaleY(0);
+	}
+	.pcds_detail_box.active{
+		transform: scaleY(1);
+		transition: transform 0.4s;
+	}
+	.pcds_detail_box .pcds_detail{
+		display: none;
+	}
+	.pcds_detail_box.active .pcds_detail{
+		display: block;
+	}
+	.pcds_detail_box:nth-last-child(1) .pcds_detail{
+		padding-bottom: 0;
+	}
+	.pcds_detail:before{
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: 1px;
+		background-color: #c7c7c7;
+		top: 0;
+		left: 0;
+		transform-origin: center top;
+		transform: scaleY(.5);
+	}
+
+	.pcd_pet_detail .pcd_pet_item{
+		padding: 0 8px;
+		color: #212121;
+		line-height: 1.8em;
+	}
+	.pcd_pet_detail .pcd_pet_item:before{
+		content: "";
+		position: absolute;
+		width: 200%;
+		height: 200%;
+		left: -50%;
+		top: -50%;
+		border: 1px solid #c7c7c7;
+		border-radius: 4px;
+		transform-origin: center;
+		transform: scale(.5);
+		box-sizing: border-box;
+	}
+	.pcd_table{
+		margin-top: 5px;
+		font-size: 13px;
+		color: #212121;
+		line-height: 2em;
+		width: 100%;
+		border-collapse: collapse;
+		table-layout: fixed;
+	}
+	.pcd_table td{
+		position: relative;
+		padding: 4px 0;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+	.pcd_table tr{
+		position: relative;
+	}
+	.ird_table_head td{
+		color: #9b9b9b;
+		border-bottom: 2px solid #e4e4e4;
+	}
+	.pcd_table td:nth-last-child(1){
+		text-align: right;
+	}
+	.pcd_table tr:not(.ird_table_head) td:nth-last-child(1){
+		color: #e75b42;
+	}
+	.pcd_table tr:not(.ird_table_head) td:after{
+		content: "";
+		position: absolute;
+		height: 1px;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		transform-origin: center bottom;
+		transform: scaleY(.5);
+		background-color: #e4e4e4;
+	}
+	.pcd_table tr:nth-last-child(1) td:after{
+		height: 0;
+	}
+	.pcds_page .up{
+		color: #ff5065;
+	}
+	.pcds_page .down{
+		color: #7ed321;
+	}
+	.pcds_page .weui-cells{
+		background-color: #efeff3;
+	}
+	.pcds_page .weui-cell{
+		background-color: #fff;
+	}
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left will_redirect" href="/WxInspection/inspectionReport?regcode={$_GET['regcode']}&regname={$_GET['regname']}&consumermid={$_GET['consumermid']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">检验单</a>
+		检验报告
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=INSPECT&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+</div>
+<div class="pcds_page page">
+	<div class="weui-cells pcds_list">
+		<volist name="inspectionReports" id="vo">
+		    <div class="weui-cell weui-cell_access">
+		        <div class="weui-cell__bd">
+		            <p>{$vo['parent']['ConsumptionName']}（{$vo['parent']['PetName']}）</p>
+		        </div>
+		        <div class="weui-cell__ft">{$vo['parent']['EventTime']|substr=0,9}<i class="arrow"></i></div>
+		    </div>
+		    <div class="pcds_detail_box">
+			    <div class="pcds_detail">
+					<div class="weui-panel pcd_pet_detail">
+						<div class="weui-panel__bd">
+							<div class="weui-media-box weui-media-box_text">
+								<h4 class="weui-media-box__title" style="text-align: center;color: #4990e2;">{$vo['parent']['ConsumptionName']}检测单</h4>
+								<table class="pcd_table">
+									<tbody>
+										<tr class="ird_table_head">
+											<td width="40%">指标</td>
+											<td width="18%">结果</td>
+											<td width="18%">单位</td>
+											<td width="24%">参考范围</td>
+										</tr>
+										<volist name="vo['children']" id="vo2">
+											<tr>
+												<td>{$vo2['ExamineItemName']}</td>
+												<td>{$vo2['ExamineResult']}</td>
+												<td>{$vo2['ExamineItemUnit']?:'-'}</td>
+												<td>{$vo2['ExamineLowValue']}-{$vo2['ExamineHighValue']}</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+			    </div>
+		    </div>
+	    </volist>
+
+
+
+	</div>
+	<div style="height: 1px;width: 100%;"></div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+	$('.weui-cell').click(function(event) {
+		var $detail_box = $(this).next('.pcds_detail_box');
+		$(this).toggleClass('active');
+		$detail_box.toggleClass('active');
+	});
+});
+</script>

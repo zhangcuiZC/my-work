@@ -1,0 +1,136 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+	#container, .phd_page{
+		background-color: #efeff3;
+	}
+	.phd_page{
+		top: 80px;
+	}
+	.pcd_pet_title:before{
+		height: 0;
+		border: none;
+	}
+	.phd_num{
+		color: #4aa500;
+	}
+	.phd_table{
+		margin-bottom: 15px;
+		font-size: 13px;
+		color: #212121;
+		line-height: 2em;
+		width: 100%;
+		border-collapse: collapse;
+		text-align: center;
+		table-layout: fixed;
+	}
+	.phd_table td{
+		position: relative;
+		padding: 4px 0;
+	}
+	.phd_table td:nth-child(1){
+		text-align: left;
+
+	}
+	.phd_table td:nth-child(1) div{
+		width: 100%;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+	.phd_table tr{
+		position: relative;
+	}
+	.phd_table_head td{
+		color: #9b9b9b;
+		border-bottom: 2px solid #e4e4e4;
+	}
+	.phd_table_head td:nth-child(1){
+		color: #4990e2;
+		font-size: 15px;
+	}
+	.phd_table tr:not(.phd_table_head) td:after{
+		content: "";
+		position: absolute;
+		height: 1px;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		transform-origin: center bottom;
+		transform: scaleY(.5);
+		background-color: #e4e4e4;
+	}
+	.phd_table tr:nth-last-child(1) td:after{
+		height: 0;
+	}
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left" href="javascript:history.back();">消费记录</a>
+		账单详情
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=BILL&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+</div>
+<div class="phd_page page">
+
+	<div class="weui-panel pcd_pet_title">
+		<div class="weui-panel__bd">
+			<div class="weui-media-box weui-media-box_text">
+				<h4 class="weui-media-box__title">消费总额<span class="phd_num" style="float: right;font-size: 16px;">￥{$_GET['payprice']}</span></h4>
+				<p class="weui-media-box__desc">{$_GET['paytime']|date='Y/m/d',###}（<?php $w=date('w',$_GET['paytime']);$weekArr=array("周日","周一","周二","周三","周四","周五","周六");echo $weekArr[$w]; ?>）&nbsp;&nbsp;&nbsp;&nbsp;宠物：{$_GET['petname']}</p>
+			</div>
+		</div>
+	</div>
+	
+	<volist name="datas" id="vo1">
+		<div class="weui-cells__title">{$key}（<?php $w=date('w',strtotime($key));$weekArr=array("周日","周一","周二","周三","周四","周五","周六");echo $weekArr[$w]; ?>）</div>
+		<div class="weui-panel" style="margin-top: 0;">
+			<div class="weui-panel__bd">
+				<div class="weui-media-box weui-media-box_text">
+					<volist name="vo1" id="vo2">
+						<table class="phd_table">
+							<tbody>
+								<tr class="phd_table_head">
+									<td width="60%">{$key==0 ? '挂号类' : (
+													 $key==1 ? '处方类' : (
+													 $key==2 ? '检验类' : (
+													 $key==3 ? '处置类' : (
+													 $key==4 ? '手术类' : (
+													 $key==5 ? '住院每日' : (
+													 $key==6 ? '疫苗类' : (
+													 $key==7 ? '美容类' : (
+													 $key==8 ? '商品类' : (
+													 $key==9 ? '寄养类' : (
+													 $key==10? '影像检查类' : (
+													 $key==11? '零售类' : '未知类')))))))))))}消费</td>
+									<td width="20%">数量</td>
+									<td width="20%">实付</td>
+								</tr>
+								<volist name="vo2" id="vo3">
+									<tr>
+										<td><div>{$vo3['CommodityName']}</div></td>
+										<td>{$vo3['Quantity']}</td>
+										<td><span class="phd_num">￥{$vo3['PayPrice']*$vo3['Quantity']}</span></td>
+									</tr>
+								</volist>
+							</tbody>
+						</table>
+					</volist>
+				</div>
+			</div>
+		</div>
+	</volist>
+
+	<!-- <div style="width: 100%;height: 1px;margin-top: 30px;"></div> -->
+	<div class="weui-loadmore">
+	    <span class="weui-loadmore__tips">无更多数据</span>
+	</div>
+
+	
+</div>

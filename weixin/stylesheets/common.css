@@ -1,0 +1,266 @@
+#container{
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+a{
+	color: inherit;
+}
+.page{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.page > *{
+	z-index: 1;
+}
+.page_fixed{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 999;
+}
+.page_header{
+	width: 100%;
+	height: 40px;
+	background-color: #4990E2;
+	line-height: 40px;
+	color: #fff;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+	font-weight: lighter;
+}
+.page_header_left{
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 40px;
+	line-height: 42px;
+	padding-left: 30px;
+	padding-right: 20px;
+	font-size: 13px;
+	background: url(/Public/images/icon_nav_back.png) no-repeat 5px center;
+	background-size: 28px;
+}
+.page_header_right{
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 40px;
+	width: 40px;
+	padding-right: 10px;
+	font-size: 13px;
+	background: url(/Public/images/nav_help_title1.png) no-repeat center;
+}
+.page_btn{
+	padding: 0 15px;
+}
+.pc_hospital{
+	font-size: 13px;
+	color: #4a4a4a;
+	padding: 0 15px;
+	height: 40px;
+	line-height: 40px;
+	background-color: #f0f0f0;
+	position: relative;
+}
+.pc_hospital:after{
+	content: "";
+	height: 0;
+	width: 100%;
+	border-bottom: 1px solid #c7c7c7;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform-origin: center bottom;
+	transform: scaleY(.5);
+}
+.weui-btn{
+	font-size: 15px;
+	
+	font-weight: lighter;
+	border-radius: 2px;
+}
+.weui-btn_primary{
+	color: #fff;
+	background-color: #4990e2;
+}
+.weui-btn_primary:not(.weui-btn_disabled):active{
+	background-color: #4990e2;
+}
+.weui-cell__ft{
+	font-size: 13px;
+	color: #9b9b9b;
+}
+.weui-picker{
+	font-size: 15px;
+}
+.weui-picker__hd{
+	font-size: 15px;
+}
+.weui-picker__hd a{
+	color: #4990e2;
+}
+.weui-msg{
+	padding-top: 55px !important;
+}
+.weui-msg__title{
+	font-size: 15px;
+	color: #212121;
+	margin-bottom: 20px;
+}
+.weui-msg__desc{
+	font-size: 13px;
+	color: #9b9b9b;
+}
+.weui-msg__text-area{
+	margin-bottom: 50px;
+}
+.weui-btn_default{
+	color: #5d5d5d;
+}
+.weui-msg__text-area a, .weui-footer a{
+	color: #4990e2;
+}
+.weui-btn_mini{
+	font-size: 13px;
+	height: 25px;
+	line-height: 27px;
+}
+.weui-cells{
+	margin-top: 0;
+	font-size: 15px;
+	color: #5d5d5d;
+}
+.weui-cells:after{
+	border-color: #c7c7c7;
+}
+.weui-cell{
+	height: 45px;
+	box-sizing: border-box;
+}
+.weui-panel:before, .weui-panel:after{
+	color: #c7c7c7;
+	border-color: #c7c7c7;
+}
+.weui-media-box__desc{
+	width: 100%;
+	color: #9b9b9b;
+	line-height: 2em;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+}
+.weui-media-box__desc .item_content{
+	color: #4a4a4a;
+	font-size: 15px;
+}
+.weui-btn_warn{
+	background-color: #e75b42;
+}
+.weui-media-box__title{
+	font-size: 15px;
+	color: #212121;
+}
+.weui-media-box_text .weui-media-box__title{
+	margin-bottom: 0;
+}
+.weui-cells__title{
+	font-size: 13px;
+	color: #9b9b9b;
+}
+.weui-panel{
+	margin-bottom: 10px;
+	z-index: 1;
+}
+.weui-dialog__hd{
+	padding-top: 15px;
+}
+.weui-dialog__title{
+	font-size: 15px;
+	color: #4990e2;
+}
+.weui-dialog__bd{
+	padding: 15px;
+	padding-top: 5px;
+	font-size: 13px;
+	color: #939396;
+	text-align: left;
+}
+.weui-dialog__ft{
+	line-height: 40px;
+	font-size: 13px;
+}
+.weui-dialog__btn_primary{
+	color: #4990e2;
+}
+.weui-btn:after{
+	border-radius: 4px;
+}
+.weui-panel:after, .weui-panel:before{
+	height: 0;
+}
+.weui-cell_access .weui-cell__ft:after{
+	margin-top: -5px;
+}
+.weui-cell:before{
+	left: 0;
+	height: 0;
+}
+.weui-loading_toast{
+	font-size: 13px;
+}
+.weui-icon_toast.weui-loading{
+	margin-top: 22px;
+}
+.weui-cell_access:active{
+	background-color: #ececec !important;
+}
+.weui-loadmore{
+	width: 100%;
+	margin: 0;
+	padding: 1em 0 1.5em;
+}
+.weui-loadmore__tips{
+	color: #9b9b9b;
+	font-size: 12px;
+}
+input::-webkit-input-placeholder {
+	color: #9b9b9b;
+}
+.weui-toast{
+	font-size: 13px;
+}
+.weui-icon_toast{
+	margin-top: 12px;
+}
+.alert_msg{
+	position: absolute;
+	width: 70%;
+	height: 40px;
+	line-height: 42px;
+	font-size: 12px;
+	color: #fff;
+	border-radius: 2px;
+	background: hsla(0,0%,7%,.7);
+	left: 50%;
+	top: 40%;
+	margin-left: -35%;
+	margin-top: -40px;
+	z-index: -1;
+	text-align: center;
+	opacity: 0;
+	transition: all 0.3s;
+}
+.alert_msg.active{
+	opacity: 1;
+	z-index: 9999;
+}

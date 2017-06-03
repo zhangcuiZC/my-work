@@ -1,0 +1,52 @@
+<layout name="/layout/default" />
+
+<style type="text/css">
+#container{
+	background-color: #efeff3;
+}
+.ch_page{
+	top: 80px;
+	padding-top: 10px;
+	background-color: #efeff3;
+}
+.ch_header{
+	height: 80px;
+	background: #4990e2 url(/Public/images/ch_bg.png) no-repeat center;
+	background-size: auto 80px;
+}
+.ch_page .weui-cell__ft{
+	position: absolute;
+	right: 15px;
+	top: 0;
+	height: 100%;
+}
+.ch_page .weui-panel__bd{
+	padding-right: 40px;
+}
+.ch_pet_num{
+	color: #e75b42;
+}
+.ch_page .weui-panel{
+	display: block;
+}
+</style>
+
+<div class="page_fixed">
+	<div class="ch_header"></div>
+</div>
+<div class="ch_page page">
+	<volist name="datas" id="vo">
+		<a class="weui-panel weui-cell_access will_redirect" href="/WxPersonalCenter/accessSelectedHospital?type={$_GET['type']}&regcode={$vo['regcode']}&regname={$vo['regname']}&consumermid={$vo['consumermid']}&wxid={$_GET['wxid']}&ismulti=true">
+			<div class="weui-panel__bd">
+				<div class="weui-media-box weui-media-box_text">
+					<h4 class="weui-media-box__title" style="line-height: 2.4em;">{$vo['regname']}</h4>
+				</div>
+			</div>
+			<span class="weui-cell__ft"></span>
+		</a>
+	</volist>
+	
+	<div class="weui-footer" style="background-color: transparent;margin-top: 55px;padding-bottom: 30px;">
+		<p class="weui-footer__text" style="font-size: 13px;color: #9b9b9b;">请放心选择，随时可切换医院～</p>
+	</div>
+</div>

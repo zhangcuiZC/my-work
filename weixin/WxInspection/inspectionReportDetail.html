@@ -1,0 +1,121 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+#container, .pcd_page{
+	background-color: #efeff3;
+}
+.pcd_page{
+	top: 80px;
+}
+.pcd_pet_title .weui-media-box{
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+.pcd_pet_title{
+	margin-top: 0;
+}
+.pcd_pet_title:before{
+	height: 0;
+	border: none;
+}
+.pcd_table{
+	margin-top: 5px;
+	font-size: 13px;
+	color: #212121;
+	line-height: 2em;
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+.pcd_table td{
+	position: relative;
+	padding: 4px 0;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.pcd_table tr{
+	position: relative;
+}
+.ird_table_head td{
+	color: #9b9b9b;
+	border-bottom: 2px solid #e4e4e4;
+}
+.pcd_table td:nth-last-child(1){
+	text-align: right;
+}
+.pcd_table tr:not(.ird_table_head) td:nth-last-child(1){
+	color: #e75b42;
+}
+.pcd_table tr:not(.ird_table_head) td:after{
+	content: "";
+	position: absolute;
+	height: 1px;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	transform-origin: center bottom;
+	transform: scaleY(.5);
+	background-color: #e4e4e4;
+}
+.pcd_table tr:nth-last-child(1) td:after{
+	height: 0;
+}
+.pcd_page .up{
+	color: #ff5065;
+}
+.pcd_page .down{
+	color: #7ed321;
+}
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left" href="javascript:history.back();">检验单</a>
+		检验报告
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=INSPECT&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+</div>
+<div class="pcd_page page">
+	<div class="weui-panel pcd_pet_title">
+		<div class="weui-panel__bd">
+			<div class="weui-media-box weui-media-box_text">
+				<h4 class="weui-media-box__title">{$_GET['t1']}</h4>
+				<p class="weui-media-box__desc">{$_GET['t2']}（<?php $w=date('w',strtotime($_GET['t2']));$weekArr=array("周日","周一","周二","周三","周四","周五","周六");echo $weekArr[$w]; ?>）&nbsp;&nbsp;&nbsp;&nbsp;宠物：{$_GET['t3']}</p>
+			</div>
+		</div>
+	</div>
+	<div class="weui-cells__title">检测详情</div>
+	<div class="weui-panel pcd_pet_detail" style="margin-top: 0;margin-bottom: 30px;">
+		<div class="weui-panel__bd">
+			<div class="weui-media-box weui-media-box_text">
+				<h4 class="weui-media-box__title" style="text-align: center;color: #4990e2;">{$_GET['t1']}检测单</h4>
+				<table class="pcd_table">
+					<tbody>
+						<tr class="ird_table_head">
+							<td width="40%">指标</td>
+							<td width="18%">结果</td>
+							<td width="18%">单位</td>
+							<td width="24%">参考范围</td>
+						</tr>
+						<volist name="datas" id="vo">
+							<tr>
+							<!-- <span class="up">↑</span> -->
+								<td>{$vo['ExamineItemName']}</td>
+								<td>{$vo['ExamineResult']}</td>
+								<td>{$vo['ExamineItemUnit']?:'-'}</td>
+								<td>{$vo['ExamineLowValue']}-{$vo['ExamineHighValue']}</td>
+							</tr>
+						</volist>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div style="width: 100%;height: 1px;"></div>
+</div>

@@ -1,0 +1,288 @@
+<layout name="layout/default" />
+
+<style type="text/css">
+#container{
+	background-color: #efeff3;
+}
+.mya_page{
+	top: 80px;
+	padding-top: 10px;
+	background-color: #efeff3;
+}
+.mya_page .weui-cell{
+	height: 32px;
+}
+.mya_contact_box{
+	font-size: 13px;
+	color: #4a4a4a;
+}
+.mya_contact{
+	padding-left: 25px;
+	margin: 0 auto;
+	background: url(/Public/images/icon_dianhua.png) no-repeat left -5px;
+	background-size: 25px;
+}
+.mya_success{
+	font-size: 13px;
+	color: #04ad02;
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	line-height: 27px;
+}
+.mya_waiting{
+	font-size: 13px;
+	color: #e75b41;
+	position: absolute;
+	line-height: 27px;
+	right: 15px;
+	top: 15px;
+	text-align: center;
+}
+.item_cancelled{
+	text-decoration: line-through;
+	color: #9b9b9b !important;
+}
+</style>
+
+<div class="page_fixed">
+	<div class="page_header">
+		<a class="page_header_left will_redirect" href="/WxPersonalCenter/personCenter?regcode={$_GET['regcode']}&consumermid={$_GET['consumermid']}&regname={$_GET['regname']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}">个人中心</a>
+		我的预约
+		<a class="page_header_right will_redirect" href="/WxAppointment/appointmentNotice?regcode={$_GET['regcode']}&consumermid={$_GET['consumermid']}&regname={$_GET['regname']}&wxid={$_GET['wxid']}&ismulti={$_GET['ismulti']}"></a>
+	</div>
+	<div class="pc_hospital">
+		{$_GET['regname']}
+		<if condition="$_GET['ismulti'] neq ''">
+			<a href="/WxPersonalCenter/chooseHospital?type=APPOINT&wxid={$_GET['wxid']}" class="weui-btn weui-btn_mini weui-btn_primary will_redirect" style="float: right;margin-top: 7px;">更换</a>
+		</if>
+	</div>
+</div>
+
+<div class="mya_page page">
+	<volist name="datas" id="vo">
+		<div class="weui-panel">
+			<div class="weui-panel__bd">
+				<div class="weui-media-box weui-media-box_text">
+					<if condition="($vo['state'] eq 2) AND ($vo['actualtime'] neq $vo['expecttime'])">
+						<p class="weui-media-box__desc">预约时间：<span class="item_content item_cancelled">{$vo['expecttime']}</span></p>
+						<p class="weui-media-box__desc">预约调整：<span class="item_content">{$vo.actualtime}</span></p>
+					<else />
+						<p class="weui-media-box__desc">预约时间：<span class="item_content">{$vo['expecttime']}</span></p>
+					</if>
+					<p class="weui-media-box__desc">预约项目：<span class="item_content">{$vo['servicetype'] == 1 ? '手术预约' : (
+						 $vo['servicetype'] == 2 ? '美容洗澡' : (
+						 $vo['servicetype'] == 3 ? '门诊预约' : (
+						 $vo['servicetype'] == 4 ? '疫苗驱虫' : (
+						 $vo['servicetype'] == 5 ? '其他预约' : (
+						 $vo['servicetype'] == 6 ? '回访预约' : '未知类型')))))}</span></p>
+					<p class="weui-media-box__desc">预约宠物：<span class="item_content">{$vo['petname']}</span></p>
+				</div>
+			</div>
+			<div class="weui-panel__ft weui-cell mya_contact_box weui-cell_access contact_btn" onclick="show_contact_modal();">
+				<span class="mya_contact">联系医院</span>
+			</div>
+			
+			<if condition="$vo['state'] eq '0'">
+				<div class="mya_waiting">
+					等待确认
+					<a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_warn" style="display: block;width: 60px;padding: 0;" data-id="{$vo['id']}" data-urgetime="{$vo['urgetime']}" onclick="urge_appointment(event);">催医院</a>
+				</div>
+			<elseif condition="$vo['state'] eq '1'" />
+				<div class="mya_waiting">
+					取消预约
+				</div>
+			<else />
+				<div class="mya_success">
+					预约成功
+				</div>
+			</if>
+		</div>
+	</volist>
+	
+	<if condition="$isleft eq 1">
+		<div class="weui-loadmore">
+		    <span class="weui-loadmore__tips click_to_load">加载更多</span>
+		</div>
+	<else />
+		<div class="weui-loadmore">
+		    <span class="weui-loadmore__tips">无更多数据</span>
+		</div>
+	</if>
+
+	<!-- <div class="weui-footer" style="background-color: transparent;margin-top: 55px;padding-bottom: 30px">
+		<p class="weui-footer__text" style="font-size: 13px;color: #9b9b9b;">预约成功后请准时赴约哦～</p>
+	</div> -->
+</div>
+
+<div style="display: none;" class="contact_dialog">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__hd"><strong class="weui-dialog__title">拨打号码</strong></div>
+        <div class="weui-dialog__bd">您是否要拨打{$_GET['regname']}电话？（{$telephone}）</div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:close_contact_modal();" class="weui-dialog__btn weui-dialog__btn_default contact_cancel">取消</a>
+            <a href="tel:{$telephone}" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+        </div>
+    </div>
+</div>
+<div class="alert_msg"></div>
+
+<script type="text/javascript" src="/Public/javascripts/loading_zc.js?v=16"></script>
+<script type="text/javascript" src="/Public/javascripts/remain_status_zc.js?v=2"></script>
+
+<script type="text/javascript">
+	// --------------------------------------------------
+	// 功能函数：弹出提示框
+	var show_alert_msg = (function(){
+		var timer = null;
+		var $alert_msg = $('.alert_msg');
+
+		return function (msg) {
+			$alert_msg.text(msg);
+			if (timer) {
+				clearTimeout(timer);
+				$alert_msg.removeClass('active');
+			}
+			$alert_msg.addClass('active');
+			timer = setTimeout(function() {
+				$alert_msg.removeClass('active');
+			}, 3000);
+		};
+	}());
+	// -----------------------------------
+	// ---------需要loading_zc.js，返回后保持ajax请求后的状态
+	show_prev_html();
+
+	// -----------------------------------
+	// 联系医院modal层
+	function show_contact_modal() {
+		$('.contact_dialog').show();
+	}
+	function close_contact_modal() {
+		$('.contact_dialog').hide();
+	}
+
+	function urge_appointment(event) {
+		var id = $(event.target).data('id');
+		var time_str = $(event.target).data('urgetime');
+		var urgetime;
+		if (!time_str || time_str.indexOf('0000-00-00') !== -1) {
+			urgetime = 0;
+		}else {
+			urgetime = new Date(time_str);
+		}
+
+		if (Date.now() - urgetime >= 1800000) {
+			var loading_post = weui.loading('处理中...', {
+			    className: 'loading_post'
+			});
+			var info = { id: id };
+			var urge_url = "/WxAppointment/ajaxUrgeAppointment";
+			$.ajax({
+				url: urge_url,
+				type: 'POST',
+				data: {info: info},
+				success: function(data) {
+					var d = JSON.parse(data);
+					if(d.code === 0) {
+						loading_post.hide();
+						weui.toast('操作成功', 2000);
+						$(event.target).data('urgetime', d.data);
+					}else{
+						show_alert_msg('请求错误，请重试');
+						loading_post.hide();
+					}
+				}
+			});
+		}else{
+			show_alert_msg('医院将尽快处理您的预约，请稍候');
+		}
+	}
+$(function() {
+	// -----------------------------------
+	// ---------loading_zc.js-ajax加载数据
+	// 1-是否有剩余数据
+	var isleft = $('.weui-loadmore').data('isleft') !== undefined ? $('.weui-loadmore').data('isleft') : "{$isleft}";
+
+	// 2-拼装post数据
+	var regcode = "{$_GET['regcode']}";
+	var consumermid = "{$_GET['consumermid']}";
+	var currentpage = + ($('.weui-loadmore').data('page') || "{$currentpage}") || 1;
+	var info = {
+		"regcode": regcode,
+		"consumermid": consumermid,
+		"currentpage": currentpage
+	};
+	// 3-将ajax返回数据进行拼装
+	function create_html(datas) {
+		var len = datas.length;
+		var _html = '';
+
+		for (var i = 0; i < len; i++) {
+			var data = datas[i];
+			console.log(data);
+			var _service = (
+					data.servicetype == 1 ? '手术预约' : (
+					data.servicetype == 2 ? '美容洗澡' : (
+					data.servicetype == 3 ? '门诊预约' : (
+					data.servicetype == 4 ? '疫苗驱虫' : (
+					data.servicetype == 5 ? '其他预约' : (
+					data.servicetype == 6 ? '回访预约' : '未知类型'))))));
+			var state = data.state;
+			var _state_html = '';
+
+			switch(state) {
+				case '0':
+					_state_html = '<div class="mya_waiting">' +
+								    '等待确认' +
+									'<a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_warn" style="display: block;width: 60px;padding: 0"' + 'data-id="' + data.id + '" data-urgetime="' + data.urgetime + '" onclick="urge_appointment(event);">催医院</a>' +
+								  '</div>';
+					break;
+				case '1':
+					_state_html = '<div class="mya_waiting">' +
+				            	    '取消预约' +
+			              		  '</div>';				
+					break;
+				case '2':
+					_state_html = '<div class="mya_success">' +
+				            	    '预约成功' +
+			              		  '</div>';
+			        break;
+			}
+			var _adjust = function(data) {
+				if (data.state == 2 && data.actualtime !== data.expecttime) {
+					return (
+						'<p class="weui-media-box__desc">预约调整：<span class="item_content">' + data.actualtime + '</span></p>'
+					);
+				}
+			};
+			var item = '<div class="weui-panel">' +
+					      '<div class="weui-panel__bd">' +
+				            '<div class="weui-media-box weui-media-box_text">' +
+					          '<p class="weui-media-box__desc">预约时间：<span class="item_content ' + 
+					          ((data.state==2&&data.actualtime!==data.expecttime) ? 'item_cancelled' : '') + 
+					          '">' + data.expecttime + '</span></p>' +
+					          _adjust(data) +
+					          '<p class="weui-media-box__desc">预约项目：<span class="item_content">' + _service + '</span></p>' +
+					          '<p class="weui-media-box__desc">预约宠物：<span class="item_content">' + data.petname + '</span></p>' +
+				            '</div>' +
+			              '</div>' +
+			              '<div class="weui-panel__ft weui-cell mya_contact_box weui-cell_access contact_btn" onclick="show_contact_modal();">' +
+				            '<span class="mya_contact">联系医院</span>' +
+			              '</div>' + 
+			               _state_html +
+			            '</div>';
+			_html += item;
+		}
+
+		return _html;
+	}
+	// 4-post目标url
+	var post_url = "/WxAppointment/ajaxMyAppointment";
+	// 5-创建实例并加载
+	var loading = new Loading_zc(isleft, info, create_html, post_url, null, bind_redirect_event);
+	loading.init();
+	// -----------------------------------
+});
+</script>
